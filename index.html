@@ -529,6 +529,10 @@ When a barcode scanner is not registered, the server will return a <code>http 40
 <td>A timestamp in <a target="_blank" href="https://www.unixtimestamp.com/">Unix format</a> (seconds since epoch).</td>
 </tr>
 </tbody></table>
+
+<aside class="notice">
+Please note that the 'barcode' attribute is of type String, even though it is always a number. The reason for this, is that the first digit of a barcode can be a '0'. Storing these numbers as Integer will result in unexpected errors.
+</aside>
 <h2 id='submit-local-scan-actions'>Submit local scan actions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"</span>
 -X POST
 -d <span class="s1">'{"barcodes":["123456", "789012"]'</span> 
