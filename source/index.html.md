@@ -3,12 +3,10 @@ title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
   - shell
-  - ruby
-  - python
-  - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='mailto:development@eskesmedia.nl'>Send us an email</a>
+  - <a href='https://www.eskesmedia.nl'>Copyright Eskes Media B.V.</a>
   - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
 
 includes:
@@ -19,80 +17,81 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the TicketJames API. Use our API to register barcode scanners and synchrosise scans.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+The TicketJames API is a work in progress and currently under heavy development.
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Currently, the only function of this API is to register mobile phones (Android, iOS) as barcode scanners. In future releases, API functionality will probably be expanded with:
 
-# Authentication
+- activity callbacks
+- coupon check
+- barcode check
 
-> To authorize, use this code:
 
-```ruby
-require 'kittn'
+# Localization
+TicketJames.com supports multiple languages:
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+- English (en)
+- Dutch (nl) __(default)__
+- Germen (de)
+- French (fr)
 
-```python
-import kittn
+The outputted format in the API is localized, when the locale parameter is present in the URI: 
 
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+- `https://api.ticketjames.com/nl/api/<endpoint>`
+- `https://api.ticketjames.com/en/api/<endpoint>`
+- `https://api.ticketjames.com/de/api/<endpoint>`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+Status messages will always be in English. When information is unavailable in the requested language, the projects default locale will be used.
 </aside>
 
-# Kittens
 
-## Get All Kittens
+# Authentication
+The TicketJames API doesn't required an API key or login credentials at this point. Only registered and accepted devises can communicate with the API.
 
-```ruby
-require 'kittn'
+# Barcode Scanners
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Register a new barcode scanner
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+curl "https://api.ticketjames.com/nl/api/barcode_scanners"
+  -X POST
+  -d '{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143"}' 
+  -H "Content-Type: application/json"
 ```
 
-```javascript
-const kittn = require('kittn');
+> The above command returns a `HTTP 200` status and JSON structured like this:
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+```json
+  {
+    "status": "success"
+  }
+
+```
+
+This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the 'barcode scanners' option in the backoffice. He has the option to rename the devise or block permissions.
+
+### HTTP Request
+
+`POST https://api.ticketjames.com/nl/api/barcode_scanners`
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+devise_uid | true | This is the primary key for the devise in TicketJames' backoffice.
+user_agent | false | If given, the user agent will be saved in TicketJames and linked to this devise. It will be used for pretty naming the devise when no name is given. E.g: 'iPhone 9' instead of 'unkwown device'
+
+<!-- <aside class="success">
+Remember — a happy kitten is an authenticated kitten!
+</aside>
+ -->
+## Get a list of projects for a specific Barcode Scanner
+
+```shell
+curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"
+  -H "Content-Type: application/json"
 ```
 
 > The above command returns JSON structured like this:
@@ -100,140 +99,105 @@ let kittens = api.kittens.get();
 ```json
 [
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
     "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+    "title": "Demo Project",
+    "events": [
+      {
+        "id": 456,
+        "starts_at": "2018-06-19 20:00:00 +0200",
+        "name": "Opening night",
+        "total_tickets": 245,
+        "total_scanned": 42,
+        "scannable_from": "2018-06-19 13:00:00 +0200",
+        "scannable_until": "2018-06-19 23:00:00 +0200"
+      },
+      {
+        "id": 457,
+        "starts_at": "2018-06-20 20:00:00 +0200",
+        "name": "VIP night",
+        "total_tickets": 212,
+        "total_scanned": 0,
+        "scannable_from": "2018-06-20 13:00:00 +0200",
+        "scannable_until": "2018-06-20 23:00:00 +0200"
+      }
+    ]
   }
 ]
 ```
 
-This endpoint retrieves all kittens.
+This endpoint retrieves a list of projects and events.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET https://api.ticketjames.com/<LOCALE>/api/barcode-scanners/<DEVICE-UID>/projects`
 
-### Query Parameters
+### URL Parameters
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+Parameter | Description
+--------- | -----------
+UID | The UID of an already registered devise.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
+<aside class="warning">
+When an barcode scanner is not registered, the server will return a <code>http 404 not found</code> message.
 </aside>
 
-## Get a Specific Kitten
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Get a list of scannable barcodes for a specific Barcode Scanner
 
 ```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"
+-H "Content-Type: application/json"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
+[
+  {
+    "id": 2564,
+    "event_id": 456,
+    "scannable_from": "2018-06-19 13:00:00 +0200",
+    "scannable_until": "2018-06-19 23:00:00 +0200",
+    "barcode": "291211",
+    "title": "Opening Night - 1 Adult",
+    "description": "Row 3, seat 12",
+    "status": "valid"
+  },
+  {
+    "id": 2565,
+    "event_id": 456,
+    "scannable_from": "2018-06-19 13:00:00 +0200",
+    "scannable_until": "2018-06-19 23:00:00 +0200",
+    "barcode": "034255",
+    "title": "Opening Night - 1 Child",
+    "description": "Row 7, seat 8",
+    "status": "scanned"
+  },
+  {
+    "id": 3216,
+    "event_id": 457,
+    "scannable_from": "2018-06-20 13:00:00 +0200",
+    "scannable_until": "2018-06-20 23:00:00 +0200",
+    "barcode": "655779",
+    "title": "Vip Night - 1 Adult",
+    "description": "Wheelchair - Row 2, seat 12",
+    "status": "canceled"
+  }
+]
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint requests a list of known tickets that can be scanned by the given barcode scanner.
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called from 
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`GET https://api.ticketjames.com/<LOCALE>/api/barcode-scanners/<DEVICE-UID>/tickets?since=<UNIX-TIMESTAMP>`
 
 ### URL Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+Parameter | Required | Description
+--------- | -------- | -----------
+UID | true | The UID of an already registered devise.
+since | false | A timestamp in <a target="_blank" href="https://www.unixtimestamp.com/">Unix format</a> (seconds since epoch). 
 
