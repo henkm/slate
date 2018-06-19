@@ -188,7 +188,9 @@ curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b70
 
 This endpoint requests a list of known tickets that can be scanned by the given barcode scanner.
 
-Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called from 
+Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called without the `since` parameter, the response JSON will containt __all available__ tickets. This can potentially be a very, very large list, e.gl: thousands of records.
+
+Therefore, you will probably only want to call this endpoint just the first time. When 
 
 ### HTTP Request
 
