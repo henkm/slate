@@ -239,6 +239,9 @@
                   <li>
                     <a href="#get-a-list-of-scannable-barcodes-for-a-specific-barcode-scanner" class="toc-h2 toc-link" data-title="get-a-list-of-scannable-barcodes-for-a-specific-barcode-scanner">Get a list of scannable barcodes for a specific Barcode Scanner</a>
                   </li>
+                  <li>
+                    <a href="#submit-local-scan-actions" class="toc-h2 toc-link" data-title="submit-local-scan-actions">Submit local scan actions</a>
+                  </li>
               </ul>
           </li>
           <li>
@@ -255,7 +258,7 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
-<p>Welcome to the TicketJames API. Use our API to register barcode scanners and synchrosise scans.</p>
+<p>Welcome to the TicketJames API. Use our API to register barcode scanners and synchronise scans.</p>
 
 <p>The TicketJames API is a work in progress and currently under heavy development.</p>
 
@@ -346,6 +349,7 @@ Remember — a happy kitten is an authenticated kitten!
         </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Opening night"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"total_tickets"</span><span class="p">:</span><span class="w"> </span><span class="mi">245</span><span class="p">,</span><span class="w">
         </span><span class="s2">"total_scanned"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"is_blocked"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
         </span><span class="s2">"scannable_from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-19 13:00:00 +0200"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"scannable_until"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-19 23:00:00 +0200"</span><span class="w">
       </span><span class="p">},</span><span class="w">
@@ -355,6 +359,7 @@ Remember — a happy kitten is an authenticated kitten!
         </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VIP night"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"total_tickets"</span><span class="p">:</span><span class="w"> </span><span class="mi">212</span><span class="p">,</span><span class="w">
         </span><span class="s2">"total_scanned"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"is_blocked"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
         </span><span class="s2">"scannable_from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-20 13:00:00 +0200"</span><span class="p">,</span><span class="w">
         </span><span class="s2">"scannable_until"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-20 23:00:00 +0200"</span><span class="w">
       </span><span class="p">}</span><span class="w">
@@ -379,8 +384,50 @@ Remember — a happy kitten is an authenticated kitten!
 </tbody></table>
 
 <aside class="warning">
-When an barcode scanner is not registered, the server will return a <code>http 404 not found</code> message.
+When a barcode scanner is not registered, the server will return a <code>http 404 not found</code> message.
 </aside>
+<h3 id='return-message'>Return message</h3>
+<p>The JSON response contains a list of <code>projects</code>, each containing one ore more <code>events</code>.</p>
+
+<table><thead>
+<tr>
+<th>Attribute</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>Unique event ID</td>
+</tr>
+<tr>
+<td>starts_at</td>
+<td>Start time of the event</td>
+</tr>
+<tr>
+<td>name</td>
+<td>(localized) name of the event</td>
+</tr>
+<tr>
+<td>total_tickets</td>
+<td>The total number of valid tickets for this event</td>
+</tr>
+<tr>
+<td>total_scanned</td>
+<td>The total number of tickets already scanned</td>
+</tr>
+<tr>
+<td>is_blocked</td>
+<td>Returns <code>false</code> by default, but can be <code>true</code> if the scanning device is blocked by the project owner.</td>
+</tr>
+<tr>
+<td>scannable_from</td>
+<td>Tickets can be scanned later than given time</td>
+</tr>
+<tr>
+<td>scannable_from</td>
+<td>Tickets can be scanned until given time</td>
+</tr>
+</tbody></table>
 <h2 id='get-a-list-of-scannable-barcodes-for-a-specific-barcode-scanner'>Get a list of scannable barcodes for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"</span>
 -H <span class="s2">"Content-Type: application/json"</span>
 </code></pre>
@@ -424,7 +471,10 @@ When an barcode scanner is not registered, the server will return a <code>http 4
 
 <p>Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called without the <code>since</code> parameter, the response JSON will containt <strong>all available</strong> tickets. This can potentially be a very, very large list, e.gl: thousands of records.</p>
 
-<p>Therefore, you will probably only want to call this endpoint just the first time. When </p>
+<p>Therefore, you will probably only want to call this endpoint just the first time. When you call the endpoint <strong>with</strong> the <code>since</code> parameter, the resulting JSON will only contain tickets that have been changed since the given time:
+ - New tickets
+ - Tickets with changed details (seat number, title, etc.)
+ - Tickets with changed status (valid -&gt; scanned, or valid -&gt; canceled)</p>
 <h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/barcode-scanners/&lt;DEVICE-UID&gt;/tickets?since=&lt;UNIX-TIMESTAMP&gt;</code></p>
 <h3 id='url-parameters-2'>URL Parameters</h3>
@@ -436,6 +486,11 @@ When an barcode scanner is not registered, the server will return a <code>http 4
 </tr>
 </thead><tbody>
 <tr>
+<td>locale</td>
+<td>false</td>
+<td>The requested locale for titles and descriptions.</td>
+</tr>
+<tr>
 <td>UID</td>
 <td>true</td>
 <td>The UID of an already registered devise.</td>
@@ -446,12 +501,120 @@ When an barcode scanner is not registered, the server will return a <code>http 4
 <td>A timestamp in <a target="_blank" href="https://www.unixtimestamp.com/">Unix format</a> (seconds since epoch).</td>
 </tr>
 </tbody></table>
-<h1 id='errors'>Errors</h1>
-<aside class="notice">
-This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
-</aside>
+<h2 id='submit-local-scan-actions'>Submit local scan actions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"</span>
+-X POST
+-d <span class="s1">'{"barcodes":["123456", "789012"]'</span> 
+-H <span class="s2">"Content-Type: application/json"</span>
+</code></pre>
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"123456"</span><span class="p">:</span><span class="w"> </span><span class="s2">"scanned"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ticket"</span><span class="p">:{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2565</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"event_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"scannable_from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-19 13:00:00 +0200"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"scannable_until"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-19 23:00:00 +0200"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Opening Night - 1 Child"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Row 4, seat 8"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"scanned"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"789012"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invalid"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"655779"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invalid_time"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ticket"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2565</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"event_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"scannable_from"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-20 13:00:00 +0200"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"scannable_until"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2018-06-20 23:00:00 +0200"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"barcode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"034255"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Opening Night - 1 Child"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Row 7, seat 8"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"valid"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+<p>Use this endpoint to send a batch of barocdes to the API. Both valid and invalid barcodes can be sent. The API will generate and return a response for each barcode and return an JSON Array containing all the responses.</p>
 
-<p>The Kittn API uses the following error codes:</p>
+<aside class="notice">
+Even if you are making a 'scan' request for every ticket scanned, the `barcodes` parameter should be an Array (of 1 object, in that case).
+</aside>
+<h3 id='suggested-workflow'>Suggested workflow</h3>
+<p>The suggested workflow is to sync <strong>asynchronously</strong> and to sync <strong>often</strong>. Every time you scan a ticket locally, just check it with your local database. You should be able to assume it is up to date (you are the one who should make sure of that).</p>
+<h3 id='what-if-a-ticket-is-scanned-on-the-device-but-not-found-in-the-database'>What if a ticket is scanned on the device, but not found in the database?</h3>
+<p>This would be a good time to make a call to this endpoint and check the status for this barcode. Maybe it has just been purchased and your database isn&#39;t up to date yet. </p>
+<h3 id='http-request-4'>HTTP Request</h3>
+<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/barcode-scanners/&lt;DEVICE-UID&gt;/scan</code></p>
+<h3 id='url-parameters-3'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>locale</td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td>UID</td>
+<td>true</td>
+<td>The UID of an already registered devise.</td>
+</tr>
+</tbody></table>
+<h3 id='query-parameters-2'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>barcodes</td>
+<td>true</td>
+<td>An array of barcodes to sync back to the server.</td>
+</tr>
+</tbody></table>
+<h3 id='possible-status-messages'>Possible status messages</h3>
+<table><thead>
+<tr>
+<th>Message</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>success</td>
+<td>The ticket will be marked as scanned. OK!</td>
+</tr>
+<tr>
+<td>already_scanned</td>
+<td>This ticket has already been scanned.</td>
+</tr>
+<tr>
+<td>canceled</td>
+<td>This ticket used to be valid, but has been canceled.</td>
+</tr>
+<tr>
+<td>invalid</td>
+<td>No tickets found with this barcode. Is your device registered for this project?</td>
+</tr>
+<tr>
+<td>invalid_time</td>
+<td>This tickets is valid, but the scan time isn&#39;t within the limits of &#39;scannable_from&#39; and &#39;scannable_until&#39;. The ticket <strong>will not be marked as scanned</strong>.</td>
+</tr>
+</tbody></table>
+<h1 id='errors'>Errors</h1>
+<p>TicketJames API uses the following error codes:</p>
 
 <table><thead>
 <tr>
@@ -465,19 +628,19 @@ This error section is stored in a separate file in <code>includes/_errors.md</co
 </tr>
 <tr>
 <td>401</td>
-<td>Unauthorized -- Your API key is wrong.</td>
+<td>Unauthorized -- Your credentials are wrong.</td>
 </tr>
 <tr>
 <td>403</td>
-<td>Forbidden -- The kitten requested is hidden for administrators only.</td>
+<td>Forbidden</td>
 </tr>
 <tr>
 <td>404</td>
-<td>Not Found -- The specified kitten could not be found.</td>
+<td>Not Found</td>
 </tr>
 <tr>
 <td>405</td>
-<td>Method Not Allowed -- You tried to access a kitten with an invalid method.</td>
+<td>Method Not Allowed -- You tried to access an invalid method.</td>
 </tr>
 <tr>
 <td>406</td>
@@ -485,7 +648,7 @@ This error section is stored in a separate file in <code>includes/_errors.md</co
 </tr>
 <tr>
 <td>410</td>
-<td>Gone -- The kitten requested has been removed from our servers.</td>
+<td>Gone -- The requested object has been removed from our servers.</td>
 </tr>
 <tr>
 <td>418</td>
@@ -493,7 +656,7 @@ This error section is stored in a separate file in <code>includes/_errors.md</co
 </tr>
 <tr>
 <td>429</td>
-<td>Too Many Requests -- You&#39;re requesting too many kittens! Slow down!</td>
+<td>Too Many Requests -- You&#39;re making too many requests! Slow down!</td>
 </tr>
 <tr>
 <td>500</td>
