@@ -422,7 +422,9 @@ When an barcode scanner is not registered, the server will return a <code>http 4
 </span></code></pre>
 <p>This endpoint requests a list of known tickets that can be scanned by the given barcode scanner.</p>
 
-<p>Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called from </p>
+<p>Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called without the <code>since</code> parameter, the response JSON will containt <strong>all available</strong> tickets. This can potentially be a very, very large list, e.gl: thousands of records.</p>
+
+<p>Therefore, you will probably only want to call this endpoint just the first time. When </p>
 <h3 id='http-request-3'>HTTP Request</h3>
 <p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/barcode-scanners/&lt;DEVICE-UID&gt;/tickets?since=&lt;UNIX-TIMESTAMP&gt;</code></p>
 <h3 id='url-parameters-2'>URL Parameters</h3>
