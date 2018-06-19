@@ -294,20 +294,33 @@ Status messages will always be in English. When information is unavailable in th
 <p>The TicketJames API doesn&#39;t required an API key or login credentials at this point. Only registered and accepted devises can communicate with the API.</p>
 <h1 id='barcode-scanners'>Barcode Scanners</h1><h2 id='register-a-new-barcode-scanner'>Register a new barcode scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/nl/api/barcode_scanners"</span>
   -X POST
-  -d <span class="s1">'{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143"}'</span> 
+  -d <span class="s1">'{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143", "type":"project", id":"2", "key":"0e3e0fee239d849b82b5db788ddcb8e3"}'</span> 
   -H <span class="s2">"Content-Type: application/json"</span>
 </code></pre>
 <blockquote>
 <p>The above command returns a <code>HTTP 200</code> status and JSON structured like this:</p>
 </blockquote>
 <pre class="highlight json tab-json"><code><span class="w">  </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="w">
+    </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Congratulations, you now have access to 'Demo Project', 432 tickets will be imported."</span><span class="w">
   </span><span class="p">}</span><span class="w">
 
 </span></code></pre>
 <p>This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the &#39;barcode scanners&#39; option in the backoffice. He has the option to rename the devise or block permissions.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code>POST https://api.ticketjames.com/nl/api/barcode_scanners</code></p>
+<h3 id='obtain-parameters-from-qr-code'>Obtain parameters from QR code</h3>
+<p>How does devise registration work? The project owner invites an employee to scan the tickets for his event(s). The project owner prints/shows a special QR code from the TicketJames backoffice. By scanning this code, the employees phone is now registered to the designated event(s). The secret is in the QR code. When scanned, the QR code will read something like this:</p>
+
+<p><code>eyJ0eXBlIjoicHJvamVjdCIsICJpZCI6Miwia2V5IjoiMGUzZTBmZWUyMzlkODQ5YjgyYjVkYjc4OGRkY2I4ZTMifQ==</code></p>
+
+<p>Your software should at this point think: <em>hey, this looks like a Base64 encrypted string, I&#39;ll decode it!</em>.</p>
+
+<p>The string above, decodes to:</p>
+
+<p><code>{&quot;type&quot;:&quot;project&quot;, &quot;id&quot;:2,&quot;key&quot;:&quot;0e3e0fee239d849b82b5db788ddcb8e3&quot;}</code></p>
+
+<p>The decoded parameters can then be used to register the devise with a POST to the <code>barcode_scanners</code> endpoint.</p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -324,7 +337,22 @@ Status messages will always be in English. When information is unavailable in th
 <tr>
 <td>user_agent</td>
 <td>false</td>
-<td>If given, the user agent will be saved in TicketJames and linked to this devise. It will be used for pretty naming the devise when no name is given. E.g: &#39;iPhone 9&#39; instead of &#39;unkwown device&#39;</td>
+<td>If given, the user agent will be saved in TicketJames and linked to this devise. It will be used for pretty naming the devise when no name is given. E.g: &#39;iPhone 9&#39; instead of &#39;unkwown device&#39;. Please provide the full user agent string, it will be parsed on the server.</td>
+</tr>
+<tr>
+<td>type</td>
+<td>true</td>
+<td>The type (one of [&#39;company&#39;,&#39;project&#39;,&#39;event&#39;,&#39;group&#39;,&#39;location&#39;]) obtained from the QR code</td>
+</tr>
+<tr>
+<td>id</td>
+<td>true</td>
+<td>The ID obtained from the QR code</td>
+</tr>
+<tr>
+<td>key</td>
+<td>true</td>
+<td>The <code>key</code> object from the QR code</td>
 </tr>
 </tbody></table>
 
