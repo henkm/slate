@@ -17,7 +17,7 @@ search: true
 
 # Introduction
 
-Welcome to the TicketJames API. Use our API to register barcode scanners and synchronise scans.
+Welcome to the TicketJames API. Use our API to register barcode scanners and synchronize scans.
 
 The TicketJames API is a work in progress and currently under heavy development.
 
@@ -224,7 +224,7 @@ curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b70
 
 This endpoint requests a list of known tickets that can be scanned by the given barcode scanner.
 
-Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called without the `since` parameter, the response JSON will containt __all available__ tickets. This can potentially be a very, very large list, e.gl: thousands of records.
+Use this request every time you want to synchronize tickets from the server to your mobile device (barcode scanner). When this endpoint is called without the `since` parameter, the response JSON will containt __all available__ tickets. This can potentially be a very, very large list, e.gl: thousands of records.
 
 Therefore, you will probably only want to call this endpoint just the first time. When you call the endpoint __with__ the `since` parameter, the resulting JSON will only contain tickets that have been changed since the given time:
  - New tickets
