@@ -17,7 +17,7 @@ search: true
 
 # Introduction
 
-Welcome to the TicketJames API. Use our API to register barcode scanners and synchrosise scans.
+Welcome to the TicketJames API. Use our API to register barcode scanners and synchronise scans.
 
 The TicketJames API is a work in progress and currently under heavy development.
 
@@ -108,6 +108,7 @@ curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b70
         "name": "Opening night",
         "total_tickets": 245,
         "total_scanned": 42,
+        "is_blocked": false,
         "scannable_from": "2018-06-19 13:00:00 +0200",
         "scannable_until": "2018-06-19 23:00:00 +0200"
       },
@@ -117,6 +118,7 @@ curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b70
         "name": "VIP night",
         "total_tickets": 212,
         "total_scanned": 0,
+        "is_blocked": false,
         "scannable_from": "2018-06-20 13:00:00 +0200",
         "scannable_until": "2018-06-20 23:00:00 +0200"
       }
@@ -138,8 +140,24 @@ Parameter | Description
 UID | The UID of an already registered devise.
 
 <aside class="warning">
-When an barcode scanner is not registered, the server will return a <code>http 404 not found</code> message.
+When a barcode scanner is not registered, the server will return a <code>http 404 not found</code> message.
 </aside>
+
+
+### Return message
+The JSON response contains a list of `projects`, each containing one ore more `events`.
+
+Attribute | Description
+--------- | -----------
+id | Unique event ID
+starts_at | Start time of the event
+name | (localized) name of the event
+total_tickets | The total number of valid tickets for this event
+total_scanned | The total number of tickets already scanned
+is_blocked | Returns `false` by default, but can be `true` if the scanning device is blocked by the project owner.
+scannable_from | Tickets can be scanned later than given time
+scannable_from | Tickets can be scanned until given time
+
 
 
 ## Get a list of scannable barcodes for a specific Barcode Scanner
@@ -190,7 +208,10 @@ This endpoint requests a list of known tickets that can be scanned by the given 
 
 Use this request every time you want to synchronise tickets from the server to your mobile device (barcode scanner). When this endpoint is called without the `since` parameter, the response JSON will containt __all available__ tickets. This can potentially be a very, very large list, e.gl: thousands of records.
 
-Therefore, you will probably only want to call this endpoint just the first time. When 
+Therefore, you will probably only want to call this endpoint just the first time. When you call the endpoint __with__ the `since` parameter, the resulting JSON will only contain tickets that have been changed since the given time:
+ - New tickets
+ - Tickets with changed details (seat number, title, etc.)
+ - Tickets with changed status (valid -> scanned, or valid -> canceled)
 
 ### HTTP Request
 
@@ -200,6 +221,92 @@ Therefore, you will probably only want to call this endpoint just the first time
 
 Parameter | Required | Description
 --------- | -------- | -----------
+locale | false | The requested locale for titles and descriptions.
 UID | true | The UID of an already registered devise.
 since | false | A timestamp in <a target="_blank" href="https://www.unixtimestamp.com/">Unix format</a> (seconds since epoch). 
 
+
+## Submit local scan actions
+
+```shell
+curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"
+-X POST
+-d '{"barcodes":["123456", "789012"]' 
+-H "Content-Type: application/json"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+[
+  {
+    "123456": "scanned",
+    "ticket":{
+      "id": 2565,
+      "event_id": 456,
+      "scannable_from": "2018-06-19 13:00:00 +0200",
+      "scannable_until": "2018-06-19 23:00:00 +0200",
+      "barcode": "123456",
+      "title": "Opening Night - 1 Child",
+      "description": "Row 4, seat 8",
+      "status": "scanned"
+    }
+  },
+  {
+    "789012": "invalid"
+  },
+  {
+    "655779": "invalid_time",
+    "ticket": {
+      "id": 2565,
+      "event_id": 456,
+      "scannable_from": "2018-06-20 13:00:00 +0200",
+      "scannable_until": "2018-06-20 23:00:00 +0200",
+      "barcode": "034255",
+      "title": "Opening Night - 1 Child",
+      "description": "Row 7, seat 8",
+      "status": "valid"
+    }
+  }
+]
+```
+
+Use this endpoint to send a batch of barocdes to the API. Both valid and invalid barcodes can be sent. The API will generate and return a response for each barcode and return an JSON Array containing all the responses.
+
+<aside class="notice">
+Even if you are making a 'scan' request for every ticket scanned, the `barcodes` parameter should be an Array (of 1 object, in that case).
+</aside>
+
+
+### Suggested workflow
+The suggested workflow is to sync __asynchronously__ and to sync __often__. Every time you scan a ticket locally, just check it with your local database. You should be able to assume it is up to date (you are the one who should make sure of that).
+
+### What if a ticket is scanned on the device, but not found in the database?
+This would be a good time to make a call to this endpoint and check the status for this barcode. Maybe it has just been purchased and your database isn't up to date yet. 
+
+### HTTP Request
+
+`GET https://api.ticketjames.com/<LOCALE>/api/barcode-scanners/<DEVICE-UID>/scan`
+
+### URL Parameters
+
+Parameter | Required | Description
+--------- | -------- | -----------
+locale | false | 
+UID | true | The UID of an already registered devise.
+
+### Query Parameters
+
+Parameter | Required | Description
+--------- | ------- | -----------
+barcodes | true | An array of barcodes to sync back to the server.
+
+### Possible status messages
+
+Message | Description
+------- | -----------
+success | The ticket will be marked as scanned. OK!
+already_scanned | This ticket has already been scanned.
+canceled | This ticket used to be valid, but has been canceled.
+invalid | No tickets found with this barcode. Is your device registered for this project?
+invalid_time | This tickets is valid, but the scan time isn't within the limits of 'scannable_from' and 'scannable_until'. The ticket **will not be marked as scanned**.
