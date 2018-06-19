@@ -57,7 +57,7 @@ The TicketJames API doesn't required an API key or login credentials at this poi
 ```shell
 curl "https://api.ticketjames.com/nl/api/barcode_scanners"
   -X POST
-  -d '{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143"}' 
+  -d '{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143", "type":"project", id":"2", "key":"0e3e0fee239d849b82b5db788ddcb8e3"}' 
   -H "Content-Type: application/json"
 ```
 
@@ -65,7 +65,8 @@ curl "https://api.ticketjames.com/nl/api/barcode_scanners"
 
 ```json
   {
-    "status": "success"
+    "status": "success",
+    "message": "Congratulations, you now have access to 'Demo Project', 432 tickets will be imported."
   }
 
 ```
@@ -76,12 +77,29 @@ This endpoint registers a new devise. After registration, the admin user will se
 
 `POST https://api.ticketjames.com/nl/api/barcode_scanners`
 
+
+### Obtain parameters from QR code
+How does devise registration work? The project owner invites an employee to scan the tickets for his event(s). The project owner prints/shows a special QR code from the TicketJames backoffice. By scanning this code, the employees phone is now registered to the designated event(s). The secret is in the QR code. When scanned, the QR code will read something like this:
+
+`eyJ0eXBlIjoicHJvamVjdCIsICJpZCI6Miwia2V5IjoiMGUzZTBmZWUyMzlkODQ5YjgyYjVkYjc4OGRkY2I4ZTMifQ==`
+
+Your software should at this point think: _hey, this looks like a Base64 encrypted string, I'll decode it!_.
+
+The string above, decodes to:
+
+`{"type":"project", "id":2,"key":"0e3e0fee239d849b82b5db788ddcb8e3"}`
+
+The decoded parameters can then be used to register the devise with a POST to the `barcode_scanners` endpoint.
+
 ### Query Parameters
 
 Parameter | Required | Description
 --------- | ------- | -----------
 devise_uid | true | This is the primary key for the devise in TicketJames' backoffice.
-user_agent | false | If given, the user agent will be saved in TicketJames and linked to this devise. It will be used for pretty naming the devise when no name is given. E.g: 'iPhone 9' instead of 'unkwown device'
+user_agent | false | If given, the user agent will be saved in TicketJames and linked to this devise. It will be used for pretty naming the devise when no name is given. E.g: 'iPhone 9' instead of 'unkwown device'. Please provide the full user agent string, it will be parsed on the server.
+type | true | The type (one of ['company','project','event','group','location']) obtained from the QR code
+id | true | The ID obtained from the QR code
+key | true | The `key` object from the QR code
 
 <!-- <aside class="success">
 Remember — a happy kitten is an authenticated kitten!
