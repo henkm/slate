@@ -243,6 +243,10 @@ locale | false | The requested locale for titles and descriptions.
 UID | true | The UID of an already registered devise.
 since | false | A timestamp in <a target="_blank" href="https://www.unixtimestamp.com/">Unix format</a> (seconds since epoch). 
 
+<aside class="notice">
+Please note that the 'barcode' attribute is of type String, even though it is always a number. The reason for this, is that the first digit of a barcode can be a '0'. Storing these numbers as Integer will result in unexpected errors.
+</aside>
+
 
 ## Submit local scan actions
 
