@@ -52,6 +52,14 @@ The TicketJames API doesn't required an API key or login credentials at this poi
 
 # Barcode Scanners
 
+## Introduction
+This part of the API is aimed at developers who are building a 'barcode scanning app', either on mobile or desktop devices. There are two possible uses for this:
+
+- Register a barcode scanner and use it 'online only', to check the validity of scanned barcodes.
+- Register a barcode scanner and use it 'offline first, sync later', to download a batch of available barcodes and check the validity of scanned barcodes on the device, and sync the data every once in a while.
+
+The latter is the suggested method. When using 'online only', you can skip 'get a list of projects' and 'get a list of scannable barcodes', since you'll check every barcode directly with the API.
+
 ## Register a new barcode scanner
 
 ```shell
@@ -174,7 +182,7 @@ total_tickets | The total number of valid tickets for this event
 total_scanned | The total number of tickets already scanned
 is_blocked | Returns `false` by default, but can be `true` if the scanning device is blocked by the project owner.
 scannable_from | Tickets can be scanned later than given time
-scannable_from | Tickets can be scanned until given time
+scannable_until | Tickets can be scanned until given time
 
 
 
