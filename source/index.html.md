@@ -38,9 +38,9 @@ TicketJames.com supports multiple languages:
 
 The outputted format in the API is localized, when the locale parameter is present in the URI: 
 
-- `https://api.ticketjames.com/nl/api/<endpoint>`
-- `https://api.ticketjames.com/en/api/<endpoint>`
-- `https://api.ticketjames.com/de/api/<endpoint>`
+- `https://api.ticketjames.com/nl/api/v1/<endpoint>`
+- `https://api.ticketjames.com/en/api/v1/<endpoint>`
+- `https://api.ticketjames.com/de/api/v1/<endpoint>`
 
 <aside class="notice">
 Status messages will always be in English. When information is unavailable in the requested language, the projects default locale will be used.
@@ -55,7 +55,7 @@ The TicketJames API doesn't required an API key or login credentials at this poi
 ## Register a new barcode scanner
 
 ```shell
-curl "https://api.ticketjames.com/nl/api/barcode_scanners"
+curl "https://api.ticketjames.com/nl/api/v1/barcode_scanners"
   -X POST
   -d '{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143", "type":"project", id":"2", "key":"0e3e0fee239d849b82b5db788ddcb8e3"}' 
   -H "Content-Type: application/json"
@@ -75,7 +75,7 @@ This endpoint registers a new devise. After registration, the admin user will se
 
 ### HTTP Request
 
-`POST https://api.ticketjames.com/nl/api/barcode_scanners`
+`POST https://api.ticketjames.com/nl/api/v1/barcode_scanners`
 
 
 ### Obtain parameters from QR code
@@ -108,7 +108,7 @@ Remember — a happy kitten is an authenticated kitten!
 ## Get a list of projects for a specific Barcode Scanner
 
 ```shell
-curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"
+curl "https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"
   -H "Content-Type: application/json"
 ```
 
@@ -149,7 +149,7 @@ This endpoint retrieves a list of projects and events.
 
 ### HTTP Request
 
-`GET https://api.ticketjames.com/<LOCALE>/api/barcode-scanners/<DEVICE-UID>/projects`
+`GET https://api.ticketjames.com/<LOCALE>/api/v1/barcode-scanners/<DEVICE-UID>/projects`
 
 ### URL Parameters
 
@@ -181,7 +181,7 @@ scannable_from | Tickets can be scanned until given time
 ## Get a list of scannable barcodes for a specific Barcode Scanner
 
 ```shell
-curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"
+curl "https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"
 -H "Content-Type: application/json"
 ```
 
@@ -233,7 +233,7 @@ Therefore, you will probably only want to call this endpoint just the first time
 
 ### HTTP Request
 
-`GET https://api.ticketjames.com/<LOCALE>/api/barcode-scanners/<DEVICE-UID>/tickets?since=<UNIX-TIMESTAMP>`
+`GET https://api.ticketjames.com/<LOCALE>/api/v1/barcode-scanners/<DEVICE-UID>/tickets?since=<UNIX-TIMESTAMP>`
 
 ### URL Parameters
 
@@ -251,7 +251,7 @@ Please note that the 'barcode' attribute is of type String, even though it is al
 ## Submit local scan actions
 
 ```shell
-curl "https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"
+curl "https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"
 -X POST
 -d '{"barcodes":["123456", "789012"]' 
 -H "Content-Type: application/json"
@@ -308,7 +308,7 @@ This would be a good time to make a call to this endpoint and check the status f
 
 ### HTTP Request
 
-`GET https://api.ticketjames.com/<LOCALE>/api/barcode-scanners/<DEVICE-UID>/scan`
+`GET https://api.ticketjames.com/<LOCALE>/api/v1/barcode-scanners/<DEVICE-UID>/scan`
 
 ### URL Parameters
 
