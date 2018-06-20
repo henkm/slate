@@ -282,9 +282,9 @@
 <p>The outputted format in the API is localized, when the locale parameter is present in the URI: </p>
 
 <ul>
-<li><code>https://api.ticketjames.com/nl/api/&lt;endpoint&gt;</code></li>
-<li><code>https://api.ticketjames.com/en/api/&lt;endpoint&gt;</code></li>
-<li><code>https://api.ticketjames.com/de/api/&lt;endpoint&gt;</code></li>
+<li><code>https://api.ticketjames.com/nl/api/v1/&lt;endpoint&gt;</code></li>
+<li><code>https://api.ticketjames.com/en/api/v1/&lt;endpoint&gt;</code></li>
+<li><code>https://api.ticketjames.com/de/api/v1/&lt;endpoint&gt;</code></li>
 </ul>
 
 <aside class="notice">
@@ -292,7 +292,7 @@ Status messages will always be in English. When information is unavailable in th
 </aside>
 <h1 id='authentication'>Authentication</h1>
 <p>The TicketJames API doesn&#39;t required an API key or login credentials at this point. Only registered and accepted devises can communicate with the API.</p>
-<h1 id='barcode-scanners'>Barcode Scanners</h1><h2 id='register-a-new-barcode-scanner'>Register a new barcode scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/nl/api/barcode_scanners"</span>
+<h1 id='barcode-scanners'>Barcode Scanners</h1><h2 id='register-a-new-barcode-scanner'>Register a new barcode scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/nl/api/v1/barcode_scanners"</span>
   -X POST
   -d <span class="s1">'{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143", "type":"project", id":"2", "key":"0e3e0fee239d849b82b5db788ddcb8e3"}'</span> 
   -H <span class="s2">"Content-Type: application/json"</span>
@@ -308,7 +308,7 @@ Status messages will always be in English. When information is unavailable in th
 </span></code></pre>
 <p>This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the &#39;barcode scanners&#39; option in the backoffice. He has the option to rename the devise or block permissions.</p>
 <h3 id='http-request'>HTTP Request</h3>
-<p><code>POST https://api.ticketjames.com/nl/api/barcode_scanners</code></p>
+<p><code>POST https://api.ticketjames.com/nl/api/v1/barcode_scanners</code></p>
 <h3 id='obtain-parameters-from-qr-code'>Obtain parameters from QR code</h3>
 <p>How does devise registration work? The project owner invites an employee to scan the tickets for his event(s). The project owner prints/shows a special QR code from the TicketJames backoffice. By scanning this code, the employees phone is now registered to the designated event(s). The secret is in the QR code. When scanned, the QR code will read something like this:</p>
 
@@ -360,7 +360,7 @@ Status messages will always be in English. When information is unavailable in th
 Remember — a happy kitten is an authenticated kitten!
 </aside>
  -->
-<h2 id='get-a-list-of-projects-for-a-specific-barcode-scanner'>Get a list of projects for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"</span>
+<h2 id='get-a-list-of-projects-for-a-specific-barcode-scanner'>Get a list of projects for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"</span>
   -H <span class="s2">"Content-Type: application/json"</span>
 </code></pre>
 <blockquote>
@@ -397,7 +397,7 @@ Remember — a happy kitten is an authenticated kitten!
 </span></code></pre>
 <p>This endpoint retrieves a list of projects and events.</p>
 <h3 id='http-request-2'>HTTP Request</h3>
-<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/barcode-scanners/&lt;DEVICE-UID&gt;/projects</code></p>
+<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/v1/barcode-scanners/&lt;DEVICE-UID&gt;/projects</code></p>
 <h3 id='url-parameters'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -456,7 +456,7 @@ When a barcode scanner is not registered, the server will return a <code>http 40
 <td>Tickets can be scanned until given time</td>
 </tr>
 </tbody></table>
-<h2 id='get-a-list-of-scannable-barcodes-for-a-specific-barcode-scanner'>Get a list of scannable barcodes for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"</span>
+<h2 id='get-a-list-of-scannable-barcodes-for-a-specific-barcode-scanner'>Get a list of scannable barcodes for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"</span>
 -H <span class="s2">"Content-Type: application/json"</span>
 </code></pre>
 <blockquote>
@@ -504,7 +504,7 @@ When a barcode scanner is not registered, the server will return a <code>http 40
  - Tickets with changed details (seat number, title, etc.)
  - Tickets with changed status (valid -&gt; scanned, or valid -&gt; canceled)</p>
 <h3 id='http-request-3'>HTTP Request</h3>
-<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/barcode-scanners/&lt;DEVICE-UID&gt;/tickets?since=&lt;UNIX-TIMESTAMP&gt;</code></p>
+<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/v1/barcode-scanners/&lt;DEVICE-UID&gt;/tickets?since=&lt;UNIX-TIMESTAMP&gt;</code></p>
 <h3 id='url-parameters-2'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -533,7 +533,7 @@ When a barcode scanner is not registered, the server will return a <code>http 40
 <aside class="notice">
 Please note that the 'barcode' attribute is of type String, even though it is always a number. The reason for this, is that the first digit of a barcode can be a '0'. Storing these numbers as Integer will result in unexpected errors.
 </aside>
-<h2 id='submit-local-scan-actions'>Submit local scan actions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"</span>
+<h2 id='submit-local-scan-actions'>Submit local scan actions</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/scan"</span>
 -X POST
 -d <span class="s1">'{"barcodes":["123456", "789012"]'</span> 
 -H <span class="s2">"Content-Type: application/json"</span>
@@ -583,7 +583,7 @@ Even if you are making a 'scan' request for every ticket scanned, the `barcodes`
 <h3 id='what-if-a-ticket-is-scanned-on-the-device-but-not-found-in-the-database'>What if a ticket is scanned on the device, but not found in the database?</h3>
 <p>This would be a good time to make a call to this endpoint and check the status for this barcode. Maybe it has just been purchased and your database isn&#39;t up to date yet. </p>
 <h3 id='http-request-4'>HTTP Request</h3>
-<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/barcode-scanners/&lt;DEVICE-UID&gt;/scan</code></p>
+<p><code>GET https://api.ticketjames.com/&lt;LOCALE&gt;/api/v1/barcode-scanners/&lt;DEVICE-UID&gt;/scan</code></p>
 <h3 id='url-parameters-3'>URL Parameters</h3>
 <table><thead>
 <tr>
