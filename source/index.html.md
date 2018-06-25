@@ -48,7 +48,7 @@ Status messages will always be in English. When information is unavailable in th
 
 
 # Authentication
-The TicketJames API doesn't required an API key or login credentials at this point. Only registered and accepted devises can communicate with the API.
+After a successful registration, the API returns a `key`. This key is needed for all communication. Provide the `key` as a header in each request.
 
 # Barcode Scanners
 
@@ -74,12 +74,13 @@ curl "https://api.ticketjames.com/nl/api/v1/barcode-scanners"
 ```json
   {
     "status": "success",
-    "message": "Congratulations, you now have access to 'Demo Project', 432 tickets will be imported."
+    "message": "Congratulations, you now have access to 'Demo Project', 432 tickets will be imported.",
+    "key": "f1f604bc31f98cc0544853cd48bc90c6"
   }
 
 ```
 
-This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the 'barcode scanners' option in the backoffice. He has the option to rename the devise or block permissions.
+This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the 'barcode scanners' option in the backoffice. He has the option to rename the devise or block permissions. The scanner devise should store the key, as it is used in future communication.
 
 ### HTTP Request
 
@@ -118,6 +119,7 @@ Remember — a happy kitten is an authenticated kitten!
 ```shell
 curl "https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"
   -H "Content-Type: application/json"
+  -H "key: f1f604bc31f98cc0544853cd48bc90c6"
 ```
 
 > The above command returns JSON structured like this:
@@ -191,6 +193,7 @@ scannable_until | Tickets can be scanned until given time
 ```shell
 curl "https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"
 -H "Content-Type: application/json"
+-H "key: f1f604bc31f98cc0544853cd48bc90c6"
 ```
 
 > The above command returns JSON structured like this:
@@ -263,6 +266,7 @@ curl "https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-
 -X POST
 -d '{"barcodes":["123456", "789012"]' 
 -H "Content-Type: application/json"
+-H "key: f1f604bc31f98cc0544853cd48bc90c6"
 ```
 
 > The above command returns JSON structured like this:
