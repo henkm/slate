@@ -294,7 +294,7 @@
 Status messages will always be in English. When information is unavailable in the requested language, the projects default locale will be used.
 </aside>
 <h1 id='authentication'>Authentication</h1>
-<p>The TicketJames API doesn&#39;t required an API key or login credentials at this point. Only registered and accepted devises can communicate with the API.</p>
+<p>After a successful registration, the API returns a <code>key</code>. This key is needed for all communication. Provide the <code>key</code> as a header in each request.</p>
 <h1 id='barcode-scanners'>Barcode Scanners</h1><h2 id='introduction-2'>Introduction</h2>
 <p>This part of the API is aimed at developers who are building a &#39;barcode scanning app&#39;, either on mobile or desktop devices. There are two possible uses for this:</p>
 
@@ -314,11 +314,12 @@ Status messages will always be in English. When information is unavailable in th
 </blockquote>
 <pre class="highlight json tab-json"><code><span class="w">  </span><span class="p">{</span><span class="w">
     </span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Congratulations, you now have access to 'Demo Project', 432 tickets will be imported."</span><span class="w">
+    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Congratulations, you now have access to 'Demo Project', 432 tickets will be imported."</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"f1f604bc31f98cc0544853cd48bc90c6"</span><span class="w">
   </span><span class="p">}</span><span class="w">
 
 </span></code></pre>
-<p>This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the &#39;barcode scanners&#39; option in the backoffice. He has the option to rename the devise or block permissions.</p>
+<p>This endpoint registers a new devise. After registration, the admin user will see this devise appear (in real time) in the &#39;barcode scanners&#39; option in the backoffice. He has the option to rename the devise or block permissions. The scanner devise should store the key, as it is used in future communication.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code>POST https://api.ticketjames.com/nl/api/v1/barcode-scanners</code></p>
 <h3 id='obtain-parameters-from-qr-code'>Obtain parameters from QR code</h3>
@@ -374,6 +375,7 @@ Remember — a happy kitten is an authenticated kitten!
  -->
 <h2 id='get-a-list-of-projects-for-a-specific-barcode-scanner'>Get a list of projects for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/projects"</span>
   -H <span class="s2">"Content-Type: application/json"</span>
+  -H <span class="s2">"key: f1f604bc31f98cc0544853cd48bc90c6"</span>
 </code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -470,6 +472,7 @@ When a barcode scanner is not registered, the server will return a <code>http 40
 </tbody></table>
 <h2 id='get-a-list-of-scannable-barcodes-for-a-specific-barcode-scanner'>Get a list of scannable barcodes for a specific Barcode Scanner</h2><pre class="highlight shell tab-shell"><code>curl <span class="s2">"https://api.ticketjames.com/en/api/v1/barcode-scanners/65888ba4-9570-43e7-b701-71cb3f4d2549/tickets?since=1529412079"</span>
 -H <span class="s2">"Content-Type: application/json"</span>
+-H <span class="s2">"key: f1f604bc31f98cc0544853cd48bc90c6"</span>
 </code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -549,6 +552,7 @@ Please note that the 'barcode' attribute is of type String, even though it is al
 -X POST
 -d <span class="s1">'{"barcodes":["123456", "789012"]'</span> 
 -H <span class="s2">"Content-Type: application/json"</span>
+-H <span class="s2">"key: f1f604bc31f98cc0544853cd48bc90c6"</span>
 </code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
