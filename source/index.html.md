@@ -63,7 +63,7 @@ The latter is the suggested method. When using 'online only', you can skip 'get 
 ## Register a new barcode scanner
 
 ```shell
-curl "https://api.ticketjames.com/nl/api/v1/barcode_scanners"
+curl "https://api.ticketjames.com/nl/api/v1/barcode-scanners"
   -X POST
   -d '{"devise_uid":"65888ba4-9570-43e7-b701-71cb3f4d2549", "user_agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143", "type":"project", id":"2", "key":"0e3e0fee239d849b82b5db788ddcb8e3"}' 
   -H "Content-Type: application/json"
@@ -83,7 +83,7 @@ This endpoint registers a new devise. After registration, the admin user will se
 
 ### HTTP Request
 
-`POST https://api.ticketjames.com/nl/api/v1/barcode_scanners`
+`POST https://api.ticketjames.com/nl/api/v1/barcode-scanners`
 
 
 ### Obtain parameters from QR code
@@ -97,7 +97,7 @@ The string above, decodes to:
 
 `{"type":"project", "id":2,"key":"0e3e0fee239d849b82b5db788ddcb8e3"}`
 
-The decoded parameters can then be used to register the devise with a POST to the `barcode_scanners` endpoint.
+The decoded parameters can then be used to register the devise with a POST to the `barcode-scanners` endpoint.
 
 ### Query Parameters
 
