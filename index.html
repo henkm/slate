@@ -228,17 +228,6 @@
             <a href="#authentication" class="toc-h1 toc-link" data-title="authentication">Authentication</a>
           </li>
           <li>
-            <a href="#errors" class="toc-h1 toc-link" data-title="errors">Errors</a>
-          </li>
-          <li>
-            <a href="#changelog" class="toc-h1 toc-link" data-title="changelog">Changelog</a>
-              <ul class="toc-list-h2">
-                  <li>
-                    <a href="#2018-06-24" class="toc-h2 toc-link" data-title="2018-06-24">2018/06/24</a>
-                  </li>
-              </ul>
-          </li>
-          <li>
             <a href="#barcode-scanners" class="toc-h1 toc-link" data-title="barcode-scanners">Barcode Scanners</a>
               <ul class="toc-list-h2">
                   <li>
@@ -255,6 +244,17 @@
                   </li>
                   <li>
                     <a href="#submit-local-scan-actions" class="toc-h2 toc-link" data-title="submit-local-scan-actions">Submit local scan actions</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
+            <a href="#errors" class="toc-h1 toc-link" data-title="errors">Errors</a>
+          </li>
+          <li>
+            <a href="#changelog" class="toc-h1 toc-link" data-title="changelog">Changelog</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#2018-06-24" class="toc-h2 toc-link" data-title="2018-06-24">2018/06/24</a>
                   </li>
               </ul>
           </li>
@@ -303,64 +303,6 @@ Status messages will always be in English. When information is unavailable in th
 </aside>
 <h1 id='authentication'>Authentication</h1>
 <p>After a successful registration, the API returns a <code>key</code>. This key is needed for all communication. Provide the <code>key</code> as a header in each request.</p>
-<h1 id='errors'>Errors</h1>
-<p>TicketJames API uses the following error codes:</p>
-
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request -- Your request is invalid.</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized -- Your credentials are wrong.</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed -- You tried to access an invalid method.</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
-</tr>
-<tr>
-<td>410</td>
-<td>Gone -- The requested object has been removed from our servers.</td>
-</tr>
-<tr>
-<td>418</td>
-<td>I&#39;m a teapot.</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests -- You&#39;re making too many requests! Slow down!</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
-</tr>
-</tbody></table>
-<h1 id='changelog'>Changelog</h1><h3 id='2018-06-24'>2018/06/24</h3>
-<ul>
-<li>A &#39;key&#39; header for authentication is now needed for all communication. </li>
-</ul>
 <h1 id='barcode-scanners'>Barcode Scanners</h1><h2 id='introduction'>Introduction</h2>
 <p>This part of the API is aimed at developers who are building a &#39;barcode scanning app&#39;, either on mobile or desktop devices. There are two possible uses for this:</p>
 
@@ -727,6 +669,64 @@ Even if you are making a 'scan' request for every ticket scanned, the `barcodes`
 <td>This tickets is valid, but the scan time isn&#39;t within the limits of &#39;scannable_from&#39; and &#39;scannable_until&#39;. The ticket <strong>will not be marked as scanned</strong>.</td>
 </tr>
 </tbody></table>
+<h1 id='errors'>Errors</h1>
+<p>TicketJames API uses the following error codes:</p>
+
+<table><thead>
+<tr>
+<th>Error Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>400</td>
+<td>Bad Request -- Your request is invalid.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized -- Your credentials are wrong.</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed -- You tried to access an invalid method.</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable -- You requested a format that isn&#39;t json.</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone -- The requested object has been removed from our servers.</td>
+</tr>
+<tr>
+<td>418</td>
+<td>I&#39;m a teapot.</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests -- You&#39;re making too many requests! Slow down!</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error -- We had a problem with our server. Try again later.</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable -- We&#39;re temporarily offline for maintenance. Please try again later.</td>
+</tr>
+</tbody></table>
+<h1 id='changelog'>Changelog</h1><h3 id='2018-06-24'>2018/06/24</h3>
+<ul>
+<li>A &#39;key&#39; header for authentication is now needed for all communication. </li>
+</ul>
 
       </div>
       <div class="dark-box">
