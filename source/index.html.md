@@ -10,9 +10,9 @@ toc_footers:
   - <a href='https://github.com/lord/slate'>Documentation Powered by Slate</a>
 
 includes:
+  - barcode_scanner
   - errors
   - changelog
-  - barcode_scanner
 
 search: true
 ---
